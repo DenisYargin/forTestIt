@@ -15,46 +15,30 @@ using System.Threading.Tasks;
 namespace forTestIt.tests
 {
     [TestFixture]
-    public class Tests 
+    public class Tests : BaseClass
     {
-        private IWebDriver _webDriver;
         string testIt = "Test It";
 
-        [SetUp]
-        public void Setup()
-        {
-            _webDriver = new ChromeDriver();
-            _webDriver.Manage().Window.Maximize();
-            _webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+        [Test(Description = "Позитивный кейс, поиск канала TestIt")]
+        public void CheckFindTestIt()
+        {            
+            var youtube = new MainYoutubePage(_webDriver);
+            youtube.InputYoutubeSearch(testIt);           
+            Assert.IsTrue(youtube.CheckElementExist(testIt), "Страница не содержит данного элемента в DOM");
+            Assert.IsTrue(youtube.CheckTextExist(), "Страница не содержит данной строки");
         }
 
-        [Test(Description = "Позитивный кейс, поиск канала TestIt")]
-       
-        public void CheckFindTestIt()
-        { 
-            
-            var youtube = new YoutubePage(_webDriver);
-            youtube.InputYoutubeSearch(testIt);           
-            Assert.IsTrue(youtube.CheckElementExist(testIt), "Страница не содержит данной строки");
-        }
 
         [Test(Description = "Позитивный кейс, поиск 7го видео")]
         public void ChekFindVideo10()
         {
-            var youtube = new YoutubePage(_webDriver);
+            var youtube = new MainYoutubePage(_webDriver);
             youtube.InputYoutubeSearch(testIt);
             var testPage = new TestItPage(_webDriver);
             testPage.SelectChannel();
-            
-            testPage.SelectVideo();
-            
-            
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            _webDriver.Quit();
+            testPage.SelectSorted();
+            testPage.SelectVideoInArrayList();
+            Assert.IsTrue(testPage.CheckVideoOpen());
         }
     }
 }
