@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,26 @@ namespace forTestIt.tests
 {
     public class BaseClass
     {
-        private IWebDriver driver;
-        public void AfterTests()
+        protected IWebDriver _webDriver;
+
+        [OneTimeSetUp]
+        protected void DoBeforeAllTheTests()
         {
-            driver = new ChromeDriver();
-            driver.Manage().Window.Maximize();
+            _webDriver = new ChromeDriver();
+        }
+
+        [TearDown]
+        protected void DoAfterEach()
+        {
+            _webDriver.Quit();
+        }
+
+        [SetUp]
+        protected void DobeforeEach()
+        {
+            _webDriver.Navigate().GoToUrl(TestSettings.HostPrefix);
+            _webDriver.Manage().Window.Maximize();
+            _webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
     }
 }
